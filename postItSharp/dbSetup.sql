@@ -139,10 +139,10 @@ INSERT INTO
     collaborators (accountId, albumId)
 VALUES (
         '632cc248c1fe0f9df71b9d4d',
-        23
+        34
     );
 
-SELECT collab.*, act.*, alb.*
+SELECT alb.*
 FROM collaborators collab
     JOIN accounts act ON act.id = collab.accountId
     JOIN albums alb ON alb.id = collab.albumId;
