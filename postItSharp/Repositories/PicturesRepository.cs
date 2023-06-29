@@ -36,4 +36,52 @@ public class PicturesRepository
         }, pictureData).FirstOrDefault();
         return newPicture;
     }
+
+    internal int DeletePicture(int pictureId)
+    {
+
+        string sql = @"
+        DELETE FROM pictures 
+        WHERE id = @pictureId
+        LIMIT 1
+        ;";
+        int rows = _db.Execute(sql, new { pictureId });
+        return rows;
+    }
+
+    internal Picture GetById(int pictureId)
+    {
+        string sql = @"
+        SELECT
+        pic.*,
+        act.*
+        FROM pictures pic
+        JOIN accounts act ON act.id = pic.creatorId
+        WHERE pic.id = @pictureId
+        ;";
+        Picture picture = _db.Query<Picture, Account, Picture>(sql, (picture, account) =>
+        {
+            picture.Creator = account;
+            return picture;
+        }, new { pictureId }).FirstOrDefault();
+        return picture;
+    }
+
+    internal List<Picture> GetPicturesByAlbumId(int albumId)
+    {
+        string sql = @"
+        SELECT
+        pic.*,
+        act.*
+        FROM pictures pic
+        JOIN accounts act ON act.id = pic.creatorId
+        WHERE pic.albumId = @albumId
+        ;";
+        List<Picture> albumPictures = _db.Query<Picture, Account, Picture>(sql, (picture, account) =>
+        {
+            picture.Creator = account;
+            return picture;
+        }, new { albumId }).ToList();
+        return albumPictures;
+    }
 }

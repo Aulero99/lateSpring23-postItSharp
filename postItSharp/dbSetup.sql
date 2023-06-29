@@ -31,6 +31,17 @@ CREATE TABLE
         FOREIGN KEY (albumId) REFERENCES albums(id) ON DELETE CASCADE
     ) default charset utf8 COMMENT '';
 
+CREATE TABLE
+    IF NOT EXISTS collaborators(
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        albumId INT NOT NULL,
+        accountId VARCHAR(255) NOT NULL,
+        FOREIGN KEY (albumId) REFERENCES albums(id) ON DELETE CASCADE,
+        FOREIGN KEY (accountId) REFERENCES accounts(id) ON DELETE CASCADE
+    ) default charset utf8 COMMENT '';
+
+/* SECTION albums */
+
 INSERT INTO
     albums (
         title,
@@ -121,3 +132,17 @@ FROM albums
     JOIN accounts ON albums.creatorId = accounts.id
 WHERE
     accounts.id = '634844a08c9d1ba02348913d';
+
+/* COLLABORATORS SECTION */
+
+INSERT INTO
+    collaborators (accountId, albumId)
+VALUES (
+        '632cc248c1fe0f9df71b9d4d',
+        23
+    );
+
+SELECT collab.*, act.*, alb.*
+FROM collaborators collab
+    JOIN accounts act ON act.id = collab.accountId
+    JOIN albums alb ON alb.id = collab.albumId;
