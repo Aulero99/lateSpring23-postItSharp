@@ -25,4 +25,43 @@ public class CollaboratorsRepository
         collabData.Id = lastInsertId; // cast the new id from the database to the data object so we can return it back with the M:M id
         return collabData;
     }
+
+    internal List<CollaboratorAccount> GetCollaboratorsByAlbumdId(int albumId)
+    {
+        string sql = @"
+        SELECT
+        collabs.*,
+        act.*
+        FROM collaborators collabs
+        JOIN accounts act ON act.id = collabs.accountId
+        WHERE collabs.albumId = @albumId
+        ;";
+        List<CollaboratorAccount> collabs = _db.Query<Collaborator, CollaboratorAccount, CollaboratorAccount>(sql, (collab, account) =>
+        {
+            account.CollaborationId = collab.Id;
+            return account;
+        }, new { albumId }).ToList();
+        return collabs;
+    }
+
+    internal List<CollaboratorAlbum> GetMyCollaboratorAlbums(string accountId)
+    {
+        string sql = @"
+        SELECT
+        collabs.*,
+        alb.*,
+        act.*
+        FROM collaborators collabs
+        JOIN albums alb ON alb.id= collabs.albumId
+        JOIN accounts act ON act.id = alb.creatorId
+        WHERE collabs.accountId = @accountId
+        ;";
+        List<CollaboratorAlbum> myCollabs = _db.Query<Collaborator, CollaboratorAlbum, Account, CollaboratorAlbum>(sql, (collab, album, account) =>
+        {
+            album.CollaborationId = collab.Id;
+            album.Creator = account;
+            return album;
+        }, new { accountId }).ToList();
+        return myCollabs;
+    }
 }

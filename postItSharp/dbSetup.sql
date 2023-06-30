@@ -142,7 +142,7 @@ VALUES (
         34
     );
 
-SELECT alb.*
+SELECT act.*
 FROM collaborators collab
     JOIN accounts act ON act.id = collab.accountId
     JOIN albums alb ON alb.id = collab.albumId;
