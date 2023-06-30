@@ -26,6 +26,29 @@ public class CollaboratorsRepository
         return collabData;
     }
 
+    internal int DeleteCollaborator(int collabId)
+    {
+        string sql = @"
+        DELETE FROM collaborators
+        WHERE id = @collabId
+        LIMIT 1
+        ;";
+        int rows = _db.Execute(sql, new { collabId });
+        return rows;
+    }
+
+    internal Collaborator GetById(int collabId)
+    {
+        string sql = @"
+        SELECT
+        collabs.*
+        FROM collaborators collabs
+        WHERE collabs.id = @collabId
+        ;";
+        Collaborator collab = _db.Query<Collaborator>(sql, new { collabId }).FirstOrDefault();
+        return collab;
+    }
+
     internal List<CollaboratorAccount> GetCollaboratorsByAlbumdId(int albumId)
     {
         string sql = @"

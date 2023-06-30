@@ -32,6 +32,20 @@ namespace postItSharp.Controllers
             }
         }
 
-
+        [HttpDelete("{collabId}")]
+        [Authorize]
+        public async Task<ActionResult<string>> DeleteCollaborator(int collabId)
+        {
+            try
+            {
+                Account userInfo = await _auth0.GetUserInfoAsync<Account>(HttpContext);
+                _collabsService.DeleteCollaborator(collabId, userInfo.Id);
+                return Ok("Collaborator succesfully removed.");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }
